@@ -1,7 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
 import { Routes, Route } from "react-router-dom";
-
+import Mail from "./components/mail";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import Booklistner from "./pages/Booklistner";
@@ -15,16 +15,19 @@ import Myorders from "./pages/myorders";
 
 function App() {
   return (
+    <>
+<AppNavbar />
     <Routes>
-      <Route path="/" element={<><AppNavbar /><Homepage /></>} />
+      <Route path="/" element={<><Homepage /></>} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/book" element={<Booklistner />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/book/view/:id" element={<Protection><Bookview /></Protection>} />
       <Route path="/orders/:id" element={<Protection><Orderds /></Protection>} />
-      <Route path="/view/mybook" element={<Viewmybooks />} />
+      <Route path="/view/mybook" element={<Protection><Viewmybooks /></Protection>} />
       <Route path="/book/view/myorders/:id" element={<Myorders/>} />
     </Routes>
+    </>
   );
 }
 

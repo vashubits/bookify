@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
-import { useNavigate, useParams } from 'react-router-dom';
+import {  useParams } from 'react-router-dom';
 import { useFirebase } from '../context/firebase';
+import Mail from '../components/mail';
 
 const Orderds = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [Qty, setQty] = useState("1");
 
-  const navigate = useNavigate();
+ 
   const firebase = useFirebase();
   const param = useParams();
 
   const handleOrder = async (e) => {
     e.preventDefault();
     await firebase.bookorder(name, email, Qty, param.id);
-    alert("Order Confirm");
+    
   };
 
   return (
@@ -52,9 +53,9 @@ const Orderds = () => {
           />
         </Form.Group>
 
-        <Button onClick={() => navigate(`/`)} variant="primary" type="submit">
-          Order
-        </Button>
+        <Mail  buyerName={name}
+        buyerEmail={email}
+        quantity={Qty}/>
       </Form>
     </div>
   );

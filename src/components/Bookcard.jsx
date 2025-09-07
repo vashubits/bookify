@@ -21,7 +21,7 @@ const Bookcard = (props) => {
             left: '50%',
             transform: 'translateX(-50%)'
           }}>
-            <Button onClick={ (e)=> navigate(`/book/view/${props.id}`)} variant="primary">{props.view}</Button>
+            <Button onClick={ ()=> navigate(`/book/view/${props.id}`)} variant="primary">{props.view}</Button>
           </div>
         </Card.Body>
       </Card>

@@ -17,7 +17,7 @@ const Bookview = () => {
    const [data, setdata] = useState(null)
     useEffect(() => {
        firebase.viewdatabyid(param.id).then((value)=> setdata(value) )
-     }, []);
+     }, [firebase]);
      if(data==null){
         return <h1>Loading...</h1>
      }
@@ -32,7 +32,7 @@ const Bookview = () => {
    <p>ISBN Number: {data.isbn} </p>
    <h2>Owner Details</h2>
    <p>Name: {data.Owner}</p>
-     <Button onClick={ (e)=> navigate(`/orders/${param.id}`)} variant="primary">Buy Book</Button>
+     <Button onClick={ ()=> navigate(`/orders/${param.id}`)} variant="primary">Buy Book</Button>
    
     </div>
   )

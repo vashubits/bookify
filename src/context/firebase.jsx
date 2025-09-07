@@ -77,7 +77,8 @@ const Viewmybooks =async ()=>{
   const handlecreatednewlisting = async (name, isbn, price, imageurl, Owner) => {
     const newDocRef = doc(collection(firestore, "books"));
     const userID = newDocRef.id;
-
+    
+    
     await setDoc(newDocRef, {
       name,
       isbn,
@@ -85,8 +86,11 @@ const Viewmybooks =async ()=>{
       imageurl,
       Owner,
       userID,
-      orderId:user.uid
+      orderId:user.uid,
+      ownermail: user.email
+
     });
+    
 
     return newDocRef;
   };

@@ -14,19 +14,18 @@ const Viewmybooks = () => {
           if (bookSnapshot) {
             setmybook(bookSnapshot.docs);
             bookSnapshot.forEach((doc) => {
-              console.log("Book ID:", doc.id);
-              console.log("Book Data:", doc.data());
+              
             });
           } else {
-            console.log("User not logged in or no books found.");
+            
           }
         })
         .catch((error) => {
-          console.error("Error fetching books:", error.message);
+         
         });
 
     }
-   if(mybook) {console.log(mybook)}
+   if(mybook) {}
   }, [firebase]);
    
   
@@ -35,7 +34,6 @@ const Viewmybooks = () => {
     <div className="mt- 5">
       <CardGroup>
        {mybook.map((book) => {
-  console.log(`Bookcard ID: myorders/${book.id}`);
   return (
     <Bookcard 
       key={book.id} 
