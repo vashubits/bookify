@@ -1,4 +1,3 @@
-// Mail.jsx
 import React, { useEffect, useState } from "react";
 import emailjs from "emailjs-com";
 import { useFirebase } from "../context/firebase";
@@ -8,9 +7,8 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
   const [data, setData] = useState(null);
   const navigate = useNavigate();
   const firebase = useFirebase();
-  const param = useParams(); // book id from route
+  const param = useParams(); // book id
 
-  // Fetch book data by ID
   useEffect(() => {
     if (param.id) {
       firebase.viewdatabyid(param.id).then((value) => setData(value));
@@ -23,23 +21,20 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
       return;
     }
 
-    // Prepare email data
     const order = {
-      book_title: data.name,
+      order_id: param.id,          // template variable
+      email: data.ownermail,       // template variable
       buyer_name: buyerName,
-      buyer_email: buyerEmail,
+      book_title: data.name,
       quantity: quantity,
-      owner_name: data.Owner,   // Owner name
-      email: data.ownermail     // Owner email
+      owner_name: data.Owner
     };
 
-    // EmailJS keys directly set for hosting
     const SERVICE_ID = "service_qs4edfo";
     const TEMPLATE_ID = "template_k3fkt8o";
     const PUBLIC_KEY = "gh8w3mw3cx2eCrtop";
 
-    emailjs
-      .send(SERVICE_ID, TEMPLATE_ID, order, PUBLIC_KEY)
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, order, PUBLIC_KEY)
       .then(() => {
         alert("Order Confirmed! 📩");
         navigate("/");
