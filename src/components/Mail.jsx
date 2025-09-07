@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from "react";
 import emailjs from "emailjs-com";
 import { useFirebase } from "../context/firebase";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const Mail = ({ buyerName, buyerEmail, quantity }) => {
   const [data, setData] = useState(null);
@@ -11,38 +10,38 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
   const firebase = useFirebase();
   const param = useParams(); // book id from route
 
+  // Fetch book data by ID
   useEffect(() => {
     if (param.id) {
       firebase.viewdatabyid(param.id).then((value) => setData(value));
     }
   }, [firebase, param.id]);
-  
-console.log(data)
+
   const sendOrderMail = () => {
     if (!data) {
       alert("Book data not loaded yet.");
       return;
     }
 
+    // Prepare email data
     const order = {
-  book_title: data.name,
-  buyer_name: buyerName,
-  buyer_email: buyerEmail,
-  quantity: quantity,
-  owner_name: data.Owner, // yaha book owner ka name set karo
-  email: data.ownermail       // template me {{email}} ke liye
-};
+      book_title: data.name,
+      buyer_name: buyerName,
+      buyer_email: buyerEmail,
+      quantity: quantity,
+      owner_name: data.Owner,   // Owner name
+      email: data.ownermail     // Owner email
+    };
+
+    // EmailJS keys directly set for hosting
+    const SERVICE_ID = "service_qs4edfo";
+    const TEMPLATE_ID = "template_k3fkt8o";
+    const PUBLIC_KEY = "gh8w3mw3cx2eCrtop";
 
     emailjs
-      emailjs.send(
-  import.meta.env.VITE_EMAILJS_SERVICE_ID,
-  import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-  order,
-  import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-)
+      .send(SERVICE_ID, TEMPLATE_ID, order, PUBLIC_KEY)
       .then(() => {
-        
-        alert("Order Confirm");
+        alert("Order Confirmed! 📩");
         navigate("/");
       })
       .catch((err) => {
@@ -52,7 +51,7 @@ console.log(data)
   };
 
   return (
-    <button  onClick={sendOrderMail} className="btn btn-primary" disabled={!data}>
+    <button onClick={sendOrderMail} className="btn btn-primary" disabled={!data}>
       {data ? "Place Order" : "Loading..."}
     </button>
   );
