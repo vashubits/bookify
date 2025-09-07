@@ -3,9 +3,11 @@ import React, { useEffect, useState } from "react";
 import emailjs from "emailjs-com";
 import { useFirebase } from "../context/firebase";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Mail = ({ buyerName, buyerEmail, quantity }) => {
   const [data, setData] = useState(null);
+  const navigate = useNavigate();
   const firebase = useFirebase();
   const param = useParams(); // book id from route
 
@@ -32,15 +34,16 @@ console.log(data)
 };
 
     emailjs
-      .send(
-        "service_qs4edfo",    // EmailJS Service ID
-        "template_k3fkt8o",   // EmailJS Template ID
-        order,
-        "gh8w3mw3cx2eCrtop"   // EmailJS Public Key
-      )
+      emailjs.send(
+  import.meta.env.VITE_EMAILJS_SERVICE_ID,
+  import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+  order,
+  import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+)
       .then(() => {
         
         alert("Order Confirm");
+        navigate("/");
       })
       .catch((err) => {
         console.error("Failed to send email:", err);
@@ -49,7 +52,7 @@ console.log(data)
   };
 
   return (
-    <button onClick={sendOrderMail} className="btn btn-primary" disabled={!data}>
+    <button  onClick={sendOrderMail} className="btn btn-primary" disabled={!data}>
       {data ? "Place Order" : "Loading..."}
     </button>
   );
