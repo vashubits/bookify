@@ -45,7 +45,7 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
         navigate("/");
       })
       .catch((err) => {
-        console.error("Failed to send email:", err);
+        
         alert("Failed to send email.");
       })
       .finally(() => setSending(false));
@@ -54,10 +54,10 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
   return (
     <button 
       onClick={sendOrderMail} 
-      className="btn btn-primary" 
+      className="btn btn-primary mt-3" 
       disabled={!data || sending || orderPlaced} 
     >
-      {sending ? "Processing..." : orderPlaced ? "Order Placed" : data ? "Place Order" : "Loading..."}
+      {sending ? "Processing..." : orderPlaced ? "Order Placed" : data ? "Confirm Order" : "Loading..."}
     </button>
   );
 };

@@ -95,10 +95,10 @@ const Viewmybooks =async ()=>{
     return newDocRef;
   };
 
-  const bookorder = async (name,  Qty, bookId) => {
+  const bookorder = async (name, email, Qty, bookId) => {
     return await addDoc(collection(firestore, "books", bookId, "orders"), {
       name,
-      email: user.email,
+      email,
       Qty
     });
   };
