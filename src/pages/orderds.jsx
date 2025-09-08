@@ -1,56 +1,56 @@
-import React, { useEffect, useState } from "react";
-import emailjs from "emailjs-com";
-import { useFirebase } from "../context/firebase";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import Form from 'react-bootstrap/Form';
+import { Button } from 'react-bootstrap';
+import {  useParams } from 'react-router-dom';
+import { useFirebase } from '../context/firebase';
+import Mail from '../components/mail';
 
-const Mail = ({ buyerName, buyerEmail, quantity }) => {
-  const [data, setData] = useState(null);
-  const navigate = useNavigate();
+const Orderds = () => {
+  
+  const [name, setName] = useState("");
+  const [Qty, setQty] = useState("1");
+
+ 
   const firebase = useFirebase();
-  const param = useParams(); // book id
+  const param = useParams();
 
-  useEffect(() => {
-    if (param.id) {
-      firebase.viewdatabyid(param.id).then((value) => setData(value));
-    }
-  }, [firebase, param.id]);
-
-  const sendOrderMail = () => {
-    if (!data) {
-      alert("Book data not loaded yet.");
-      return;
-    }
-
-    const order = {
-      order_id: param.id,          // template variable
-      email: data.ownermail,       // template variable
-      buyer_name: buyerName,
-      buyer_email:buyerEmail,
-      book_title: data.name,
-      quantity: quantity,
-      owner_name: data.Owner
-    };
-
-    const SERVICE_ID = "service_qs4edfo";
-    const TEMPLATE_ID = "template_k3fkt8o";
-    const PUBLIC_KEY = "gh8w3mw3cx2eCrtop";
-
-    emailjs.send(SERVICE_ID, TEMPLATE_ID, order, PUBLIC_KEY)
-      .then(() => {
-        alert("Order Confirmed! 📩");
-        navigate("/");
-      })
-      .catch((err) => {
-        console.error("Failed to send email:", err);
-        alert("Failed to send email.");
-      });
+  const handleOrder = async (e) => {
+    e.preventDefault();
+    await firebase.bookorder(name,  Qty, param.id);
+    
   };
 
   return (
-    <button onClick={sendOrderMail} className="btn btn-primary" disabled={!data}>
-      {data ? "Place Order" : "Loading..."}
-    </button>
+    <div className='container mt-5'>
+      <Form onSubmit={handleOrder}>
+        <Form.Group className="mb-3" controlId="formBasicName">
+          <Form.Label>Your Name</Form.Label>
+          <Form.Control
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+            type="text"
+            placeholder="Enter Name"
+          />
+        </Form.Group>
+
+        
+
+        <Form.Group className="mb-3" controlId="formBasicQty">
+          <Form.Label>Quantity</Form.Label>
+          <Form.Control
+            onChange={(e) => setQty(e.target.value)}
+            value={Qty}
+            type="number"
+            placeholder="Number Of Books"
+          />
+        </Form.Group>
+
+        <Mail  buyerName={name}
+        
+        quantity={Qty}/>
+      </Form>
+    </div>
   );
 };
 
-export default Mail;
+export default Orderds;
