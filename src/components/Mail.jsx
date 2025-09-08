@@ -21,53 +21,29 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
       return;
     }
 
-    // Mail for Store Owner
-    const ownerMail = {
-      order_id: param.id,
-      email: data.ownermail,
+    const order = {
+      order_id: param.id,          // template variable
+      email: data.ownermail,       // template variable
       buyer_name: buyerName,
-      buyer_email: buyerEmail,
+      buyer_email:buyerEmail,
       book_title: data.name,
       quantity: quantity,
-      owner_name: data.Owner,
-    };
-
-    // Mail for Customer
-    const customerMail = {
-      buyer_name: buyerName,
-      buyer_email: buyerEmail,
-      book_title: data.name,
-      quantity: quantity,
-      price: data.price 
+      owner_name: data.Owner
     };
 
     const SERVICE_ID = "service_qs4edfo";
-    const OWNER_TEMPLATE = "template_k3fkt8o";    // Owner ke liye template
-    const CUSTOMER_TEMPLATE = "template_m43szel";  // Customer ke liye naya template banao
+    const TEMPLATE_ID = "template_k3fkt8o";
     const PUBLIC_KEY = "gh8w3mw3cx2eCrtop";
 
-    // 1. Mail to Owner
-  emailjs.send(SERVICE_ID, OWNER_TEMPLATE, ownerMail, PUBLIC_KEY)
-  .then(() => {
-   alert(
-    `Props in Mail:
-     Name: ${buyerName}
-     Email: ${buyerEmail}
-     Quantity: ${quantity}`
-  );
-    console.log("Owner mail sent ✅");
-    console.log("Sending customer mail...");
-    return emailjs.send(SERVICE_ID, CUSTOMER_TEMPLATE, customerMail, PUBLIC_KEY);
-  })
-  .then(() => {
-    console.log("Customer mail sent ✅");
-    alert("Order Confirmed! 📩");
-    navigate("/");
-  })
-  .catch((err) => {
-    console.error("Mail failed:", err);
-    alert("Some emails failed.");
-  });
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, order, PUBLIC_KEY)
+      .then(() => {
+        alert("Order Confirmed! 📩");
+        navigate("/");
+      })
+      .catch((err) => {
+        console.error("Failed to send email:", err);
+        alert("Failed to send email.");
+      });
   };
 
   return (
