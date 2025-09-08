@@ -47,12 +47,10 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
     const CustomerMail_ID = "template_m43szel";
     const PUBLIC_KEY = "gh8w3mw3cx2eCrtop";
 
-    emailjs.send(SERVICE_ID,OwnerMail_ID, Ownermail , PUBLIC_KEY)
-      .then(() => {
-
-       return emailjs.send(SERVICE_ID,CustomerMail_ID, Customermail , PUBLIC_KEY) 
-      }
-      )
+   Promise.all([
+  emailjs.send(SERVICE_ID, OwnerMail_ID, Ownermail, PUBLIC_KEY),
+  emailjs.send(SERVICE_ID, CustomerMail_ID, Customermail, PUBLIC_KEY),
+])
       .then(() => {
         setOrderPlaced(true); 
         alert("Order Confirmed! 📩");
