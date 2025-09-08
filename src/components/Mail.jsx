@@ -47,20 +47,18 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
     const PUBLIC_KEY = "gh8w3mw3cx2eCrtop";
 
     // 1. Mail to Owner
-    emailjs.send(SERVICE_ID, OWNER_TEMPLATE, ownerMail, PUBLIC_KEY)
-      .then(() => console.log("Owner mail sent ✅"))
-      .catch((err) => console.error("Owner mail failed:", err));
-
-    // 2. Mail to Customer
-    emailjs.send(SERVICE_ID, CUSTOMER_TEMPLATE, customerMail, PUBLIC_KEY)
-      .then(() => {
-        alert("Order Confirmed! 📩");
-        navigate("/");
-      })
-      .catch((err) => {
-        console.error("Customer mail failed:", err);
-        alert("Order placed but confirmation mail failed.");
-      });
+   Promise.all([
+    emailjs.send(SERVICE_ID, OWNER_TEMPLATE, ownerMail, PUBLIC_KEY),
+    emailjs.send(SERVICE_ID, CUSTOMER_TEMPLATE, customerMail, PUBLIC_KEY),
+  ])
+    .then(() => {
+      alert("Order Confirmed! 📩");
+      navigate("/");
+    })
+    .catch((err) => {
+      console.error("Mail failed:", err);
+      alert("Some emails failed.");
+    });
   };
 
   return (
