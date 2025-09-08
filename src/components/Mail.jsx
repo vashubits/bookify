@@ -45,7 +45,7 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
     const OWNER_TEMPLATE = "template_k3fkt8o";    // Owner ke liye template
     const CUSTOMER_TEMPLATE = "template_m43szel";  // Customer ke liye naya template banao
     const PUBLIC_KEY = "gh8w3mw3cx2eCrtop";
-
+console.log("Props in Mail:", { buyerName, buyerEmail, quantity });
     // 1. Mail to Owner
   emailjs.send(SERVICE_ID, OWNER_TEMPLATE, ownerMail, PUBLIC_KEY)
   .then(() => {
