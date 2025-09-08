@@ -31,7 +31,8 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
       buyer_name: buyerName,
       book_title: data.name,
       quantity: quantity,
-      owner_name: data.Owner
+      owner_name: data.Owner,
+      buyer_email:buyerEmail
     };
 
     const SERVICE_ID = "service_qs4edfo";
