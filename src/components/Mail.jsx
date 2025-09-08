@@ -5,9 +5,10 @@ import { useParams, useNavigate } from "react-router-dom";
 
 const Mail = ({ buyerName, buyerEmail, quantity }) => {
   const [data, setData] = useState(null);
+  const [sending, setSending] = useState(false); 
   const navigate = useNavigate();
   const firebase = useFirebase();
-  const param = useParams(); // book id
+  const param = useParams(); 
 
   useEffect(() => {
     if (param.id) {
@@ -20,16 +21,13 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
       alert("Book data not loaded yet.");
       return;
     }
-    
 
-// read in Mail component
-
+    setSending(true);
 
     const order = {
-      order_id: param.id,          // template variable
-      email: data.ownermail,       // template variable
+      order_id: param.id,
+      email: data.ownermail,
       buyer_name: buyerName,
-       
       book_title: data.name,
       quantity: quantity,
       owner_name: data.Owner
@@ -47,12 +45,17 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
       .catch((err) => {
         console.error("Failed to send email:", err);
         alert("Failed to send email.");
-      });
+      })
+      .finally(() => setSending(false)); 
   };
 
   return (
-    <button onClick={sendOrderMail} className="btn btn-primary" disabled={!data}>
-      {data ? "Place Order" : "Loading..."}
+    <button 
+      onClick={sendOrderMail} 
+      className="btn btn-primary" 
+      disabled={!data || sending} 
+    >
+      {sending ? "Processing..." : data ? "Place Order" : "Loading..."}
     </button>
   );
 };
