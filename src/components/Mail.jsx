@@ -49,7 +49,12 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
     // 1. Mail to Owner
   emailjs.send(SERVICE_ID, OWNER_TEMPLATE, ownerMail, PUBLIC_KEY)
   .then(() => {
-    alert("Props in Mail:", { buyerName, buyerEmail, quantity })
+   alert(
+    `Props in Mail:
+     Name: ${buyerName}
+     Email: ${buyerEmail}
+     Quantity: ${quantity}`
+  );
     console.log("Owner mail sent ✅");
     console.log("Sending customer mail...");
     return emailjs.send(SERVICE_ID, CUSTOMER_TEMPLATE, customerMail, PUBLIC_KEY);
