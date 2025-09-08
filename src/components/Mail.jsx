@@ -5,7 +5,8 @@ import { useParams, useNavigate } from "react-router-dom";
 
 const Mail = ({ buyerName, buyerEmail, quantity }) => {
   const [data, setData] = useState(null);
-  const [sending, setSending] = useState(false); 
+  const [sending, setSending] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false); 
   const navigate = useNavigate();
   const firebase = useFirebase();
   const param = useParams(); 
@@ -22,7 +23,7 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
       return;
     }
 
-    setSending(true);
+    setSending(true); 
 
     const order = {
       order_id: param.id,
@@ -39,6 +40,7 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
 
     emailjs.send(SERVICE_ID, TEMPLATE_ID, order, PUBLIC_KEY)
       .then(() => {
+        setOrderPlaced(true); 
         alert("Order Confirmed! 📩");
         navigate("/");
       })
@@ -46,16 +48,16 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
         console.error("Failed to send email:", err);
         alert("Failed to send email.");
       })
-      .finally(() => setSending(false)); 
+      .finally(() => setSending(false));
   };
 
   return (
     <button 
       onClick={sendOrderMail} 
       className="btn btn-primary" 
-      disabled={!data || sending} 
+      disabled={!data || sending || orderPlaced} 
     >
-      {sending ? "Processing..." : data ? "Place Order" : "Loading..."}
+      {sending ? "Processing..." : orderPlaced ? "Order Placed" : data ? "Place Order" : "Loading..."}
     </button>
   );
 };
