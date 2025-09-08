@@ -25,7 +25,7 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
       order_id: param.id,          // template variable
       email: data.ownermail,       // template variable
       buyer_name: buyerName,
-      buyer_email:buyerEmail,
+      buyer_email:"buyerEmail",
       book_title: data.name,
       quantity: quantity,
       owner_name: data.Owner
