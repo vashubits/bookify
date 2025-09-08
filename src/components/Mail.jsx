@@ -38,7 +38,7 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
       buyer_email: buyerEmail,
       book_title: data.name,
       quantity: quantity,
-      price: data.price || "N/A", // agar price stored hai to
+      price: data.price 
     };
 
     const SERVICE_ID = "service_qs4edfo";
