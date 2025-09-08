@@ -25,7 +25,7 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
 
     setSending(true); 
 
-    const order = {
+    const Ownermail = {
       order_id: param.id,
       email: data.ownermail,
       buyer_name: buyerName,
@@ -36,10 +36,10 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
     };
 
     const SERVICE_ID = "service_qs4edfo";
-    const TEMPLATE_ID = "template_k3fkt8o";
+    const OwnerMail_ID = "template_k3fkt8o";
     const PUBLIC_KEY = "gh8w3mw3cx2eCrtop";
 
-    emailjs.send(SERVICE_ID, TEMPLATE_ID, order, PUBLIC_KEY)
+    emailjs.send(SERVICE_ID,OwnerMail_ID, Ownermail , PUBLIC_KEY)
       .then(() => {
         setOrderPlaced(true); 
         alert("Order Confirmed! 📩");
