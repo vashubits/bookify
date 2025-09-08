@@ -20,16 +20,16 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
       alert("Book data not loaded yet.");
       return;
     }
-    localStorage.setItem("buyerEmail", buyerEmail);
+    
 
 // read in Mail component
-const email = buyerEmail || localStorage.getItem("buyerEmail");
+
 
     const order = {
       order_id: param.id,          // template variable
       email: data.ownermail,       // template variable
       buyer_name: buyerName,
-       buyer_email: email,
+       
       book_title: data.name,
       quantity: quantity,
       owner_name: data.Owner
