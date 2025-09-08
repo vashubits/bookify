@@ -34,12 +34,25 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
       owner_name: data.Owner,
       buyer_email:buyerEmail
     };
+    const Customermail = {
+      buyer_name: buyerName,
+      book_title: data.name,
+      quantity: quantity,
+      buyer_email:buyerEmail,
+      price: data.price
+    };
 
     const SERVICE_ID = "service_qs4edfo";
     const OwnerMail_ID = "template_k3fkt8o";
+    const CustomerMail_ID = "template_m43szel";
     const PUBLIC_KEY = "gh8w3mw3cx2eCrtop";
 
     emailjs.send(SERVICE_ID,OwnerMail_ID, Ownermail , PUBLIC_KEY)
+      .then(() => {
+
+       return emailjs.send(SERVICE_ID,CustomerMail_ID, Customermail , PUBLIC_KEY) 
+      }
+      )
       .then(() => {
         setOrderPlaced(true); 
         alert("Order Confirmed! 📩");
