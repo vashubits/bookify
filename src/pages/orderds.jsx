@@ -9,21 +9,25 @@ const Orderds = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [Qty, setQty] = useState("1");
-  const [orderPlaced, setOrderPlaced] = useState(false); // 🔹 NEW STATE
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [issubmit, setissubmit] = useState(false);
 
   const firebase = useFirebase();
   const param = useParams();
 
   const handleOrder = async (e) => {
     e.preventDefault();
+    setissubmit(true); // disable button
 
     try {
-      const value = await firebase.bookorder(name, email, Qty, param.id);
-      
-      setOrderPlaced(true); // 🔹 Trigger Mail component
+      await firebase.bookorder(name, email, Qty, param.id);
+      setOrderPlaced(true); // show Mail component
     } catch (err) {
-      
+      console.error("Order failed:", err);
       setOrderPlaced(false);
+    } finally {
+      // 👇 yahan re-enable nahi kar rahe,
+      // kyunki Mail component handle karega
     }
   };
 
@@ -64,14 +68,19 @@ const Orderds = () => {
           />
         </Form.Group>
 
-        <Button variant="primary" type="submit">
-          Place Order
+        <Button variant="primary" disabled={issubmit} type="submit">
+          {issubmit ? "Placing Order..." : "Place Order"}
         </Button>
       </Form>
 
-      {/* 🔹 Show Mail only after order is placed */}
+      {/* Show Mail only after order is placed */}
       {orderPlaced && (
-        <Mail buyerName={name} buyerEmail={email} quantity={Qty} />
+        <Mail
+          buyerName={name}
+          buyerEmail={email}
+          quantity={Qty}
+          onMailDone={() => setissubmit(false)} // 👈 Mail se control aayega
+        />
       )}
     </div>
   );

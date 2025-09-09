@@ -3,13 +3,14 @@ import emailjs from "emailjs-com";
 import { useFirebase } from "../context/firebase";
 import { useParams, useNavigate } from "react-router-dom";
 
-const Mail = ({ buyerName, buyerEmail, quantity }) => {
+const Mail = ({ buyerName, buyerEmail, quantity, onMailDone }) => {
   const [data, setData] = useState(null);
   const [sending, setSending] = useState(false);
-  const [orderPlaced, setOrderPlaced] = useState(false); 
+  const [orderPlaced, setOrderPlaced] = useState(false);
+
   const navigate = useNavigate();
   const firebase = useFirebase();
-  const param = useParams(); 
+  const param = useParams();
 
   useEffect(() => {
     if (param.id) {
@@ -23,7 +24,7 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
       return;
     }
 
-    setSending(true); 
+    setSending(true);
 
     const Ownermail = {
       order_id: param.id,
@@ -32,14 +33,15 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
       book_title: data.name,
       quantity: quantity,
       owner_name: data.Owner,
-      buyer_email:buyerEmail
+      buyer_email: buyerEmail,
     };
+
     const Customermail = {
       buyer_name: buyerName,
       book_title: data.name,
       quantity: quantity,
-      buyer_email:buyerEmail,
-      price: data.price
+      buyer_email: buyerEmail,
+      price: data.price,
     };
 
     const SERVICE_ID = "service_qs4edfo";
@@ -47,36 +49,42 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
     const CustomerMail_ID = "template_m43szel";
     const PUBLIC_KEY = "gh8w3mw3cx2eCrtop";
 
-   Promise.all([
-  emailjs.send(SERVICE_ID, OwnerMail_ID, Ownermail, PUBLIC_KEY),
-  emailjs.send(SERVICE_ID, CustomerMail_ID, Customermail, PUBLIC_KEY),
-])
+    Promise.all([
+      emailjs.send(SERVICE_ID, OwnerMail_ID, Ownermail, PUBLIC_KEY),
+      emailjs.send(SERVICE_ID, CustomerMail_ID, Customermail, PUBLIC_KEY),
+    ])
       .then(() => {
-        setOrderPlaced(true); 
+        setOrderPlaced(true);
         alert("Order Confirmed! 📩");
+
+        // 🔹 Parent ka issubmit false karna
+        if (onMailDone) onMailDone();
+
         navigate("/");
       })
-      .catch((err) => {
-        
+      .catch(() => {
         alert("Failed to send email.");
+        // ❗ Agar fail hone par bhi issubmit false karna ho to:
+        if (onMailDone) onMailDone();
       })
       .finally(() => setSending(false));
   };
 
   return (
-    <button 
-      onClick={sendOrderMail} 
-      className="btn btn-primary mt-3" 
-      disabled={!data || sending || orderPlaced} 
+    <button
+      onClick={sendOrderMail}
+      className="btn btn-primary mt-3"
+      disabled={!data || sending || orderPlaced}
     >
-      {sending ? "Processing..." : orderPlaced ? "Order Placed" : data ? "Confirm Order" : "Loading..."}
+      {sending
+        ? "Processing..."
+        : orderPlaced
+        ? "Order Placed"
+        : data
+        ? "Confirm Order"
+        : "Loading..."}
     </button>
   );
 };
 
 export default Mail;
-
-
-
-
-
