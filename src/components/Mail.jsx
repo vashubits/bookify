@@ -75,3 +75,8 @@ const Mail = ({ buyerName, buyerEmail, quantity }) => {
 };
 
 export default Mail;
+
+
+
+
+
