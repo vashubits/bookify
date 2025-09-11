@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import emailjs from "emailjs-com";
 import { useFirebase } from "../context/firebase";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify"; 
 
 const Mail = ({ buyerName, buyerEmail, quantity, onMailDone }) => {
   const [data, setData] = useState(null);
@@ -20,7 +21,7 @@ const Mail = ({ buyerName, buyerEmail, quantity, onMailDone }) => {
 
   const sendOrderMail = () => {
     if (!data) {
-      alert("Book data not loaded yet.");
+      toast.error("❌ Book data not loaded yet.");
       return;
     }
 
@@ -55,35 +56,36 @@ const Mail = ({ buyerName, buyerEmail, quantity, onMailDone }) => {
     ])
       .then(() => {
         setOrderPlaced(true);
-        alert("Order Confirmed! 📩");
+        toast.success("🎉 Order Confirmed!");
 
-        // 🔹 Parent ka issubmit false karna
         if (onMailDone) onMailDone();
 
-        navigate("/");
+        setTimeout(() => navigate("/"), 2000);
       })
       .catch(() => {
-        alert("Failed to send email.");
-        // ❗ Agar fail hone par bhi issubmit false karna ho to:
+        toast.error("❌ Failed to send email.");
         if (onMailDone) onMailDone();
       })
       .finally(() => setSending(false));
   };
 
   return (
-    <button
-      onClick={sendOrderMail}
-      className="btn btn-primary mt-3"
-      disabled={!data || sending || orderPlaced}
-    >
-      {sending
-        ? "Processing..."
-        : orderPlaced
-        ? "Order Placed"
-        : data
-        ? "Confirm Order"
-        : "Loading..."}
-    </button>
+    <>
+      
+      <button
+        onClick={sendOrderMail}
+        className="btn btn-primary mt-3"
+        disabled={!data || sending || orderPlaced}
+      >
+        {sending
+          ? "Processing..."
+          : orderPlaced
+          ? "Order Placed"
+          : data
+          ? "Confirm Order"
+          : "Loading..."}
+      </button>
+    </>
   );
 };
 
