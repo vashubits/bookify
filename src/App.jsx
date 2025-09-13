@@ -3,7 +3,7 @@ import './App.css';
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";   
 import "react-toastify/dist/ReactToastify.css";    
-
+import Signout from "./pages/signout";
 import Mail from "./components/mail";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
@@ -33,6 +33,7 @@ function App() {
         <Route path="/orders/:id" element={<Protection><Orderds /></Protection>} />
         <Route path="/view/mybook" element={<Protection><Viewmybooks /></Protection>} />
         <Route path="/book/view/myorders/:id" element={<Myorders />} />
+        <Route path="/signout" element={<Signout />} />
       </Routes>
     </>
   );

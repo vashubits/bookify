@@ -15,6 +15,7 @@ const AppNavbar = () => {
             <Nav.Link as={Link} to="/">Home</Nav.Link>
             <Nav.Link as={Link} to="/book">Book Listner</Nav.Link>
             <Nav.Link as={Link} to="/view/mybook">My Books</Nav.Link>
+            <Nav.Link as={Link} to="/signout">Signout</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

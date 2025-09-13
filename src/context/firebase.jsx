@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
+import { signOut } from "firebase/auth";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -69,6 +70,10 @@ const Viewmybooks =async ()=>{
    
    return   getDocs(collection(firestore,"books",id,"orders"));
   };
+  const logout =()=>{
+    const auth = getAuth();
+    return signOut(auth)
+  }
 
   const signinUserWithEmailAndPass = (email, password) => {
     return signInWithEmailAndPassword(firebaseAuth, email, password);
@@ -121,6 +126,7 @@ const Viewmybooks =async ()=>{
         listallbooks,
         bookorder,
         viewdatabyid,
+        logout,
         signupUserWithEmailAndPassword,
         handlecreatednewlisting,
         signinUserWithEmailAndPass,
