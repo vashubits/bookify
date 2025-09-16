@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useFirebase } from '../context/firebase';
-import { useNavigate } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import React, { useState, useEffect } from "react";
+import { useFirebase } from "../context/firebase";
+import { useNavigate } from "react-router-dom";
+import Button from "react-bootstrap/Button";
 
 const RegisterPage = () => {
   const firebase = useFirebase();
-  const [email, setemail] = useState("");
-  const [password, setpassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,71 +15,120 @@ const RegisterPage = () => {
     }
   }, [firebase, navigate]);
 
-  const handlesubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    await firebase.signupUserWithEmailAndPassword(email, password);
+    if (!email || !password) {
+      alert("Please fill in both fields.");
+      return;
+    }
+    try {
+      await firebase.signupUserWithEmailAndPassword(email, password);
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      alert("Error signing up. Check console.");
+    }
   };
 
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
         <div className="col-md-5">
-          <div className="card p-4 shadow-sm">
-            <h4 className="text-center mb-4">Create an Account</h4>
-            <form onSubmit={handlesubmit}>
+          <div
+            className="card p-4 shadow"
+            style={{
+              borderRadius: "12px",
+              background: "linear-gradient(to right, #f0f4ff, #ffffff)",
+            }}
+          >
+            <h4
+              className="text-center mb-4"
+              style={{ color: "#1976d2", fontWeight: "600" }}
+            >
+              Create an Account
+            </h4>
+
+            <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email address</label>
+                <label htmlFor="email" className="form-label">
+                  Email address
+                </label>
                 <input
                   type="email"
                   className="form-control"
                   id="email"
-                  onChange={e => setemail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   value={email}
                   placeholder="Enter email"
+                  required
                 />
               </div>
-              <div className="mb-1">
-                <label htmlFor="password" className="form-label">Password</label>
+
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">
+                  Password
+                </label>
                 <input
                   type="password"
                   className="form-control"
                   id="password"
-                  onChange={e => setpassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   value={password}
                   placeholder="Enter password"
+                  required
                 />
               </div>
 
-             
-
-              <button
+              <Button
                 type="submit"
-                className="btn w-100"
-                style={{ backgroundColor: '#5082a1fc', color: '#fff' }}
+                className="w-100 mb-3"
+                style={{
+                  background: "linear-gradient(135deg, #00bcd4, #1976d2)",
+                  border: "none",
+                  borderRadius: "10px",
+                  fontWeight: "600",
+                  padding: "10px",
+                }}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.background =
+                    "linear-gradient(135deg, #1976d2, #00bcd4)")
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.background =
+                    "linear-gradient(135deg, #00bcd4, #1976d2)")
+                }
               >
                 Create Account
-              </button>
+              </Button>
             </form>
 
-         
-            <div className="mt-3 text-center">
-              <span>
-                Already have an account? 
-                <button
-                  onClick={() => navigate('/login')}
-                  className="btn text-decoration-none"
-                  style={{
-                    marginLeft: '5px',
-                    backgroundColor: '#5082a1fc',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '5px'
-                  }}
-                >
-                  Login
-                </button>
+            <div className="text-center mt-3">
+              <span style={{ color: "#555", fontWeight: "500" }}>
+                Already have an account?
               </span>
+              <Button
+                onClick={() => navigate("/login")}
+                className="ms-2"
+                style={{
+                  background: "linear-gradient(135deg, #1976d2, #00bcd4)",
+                  color: "#fff",
+                  border: "none",
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  fontWeight: "500",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.background =
+                    "linear-gradient(135deg, #00bcd4, #1976d2)")
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.background =
+                    "linear-gradient(135deg, #1976d2, #00bcd4)")
+                }
+              >
+                Login
+              </Button>
             </div>
           </div>
         </div>

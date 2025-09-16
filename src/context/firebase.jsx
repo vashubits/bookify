@@ -86,7 +86,7 @@ const Viewmybooks =async ()=>{
     
     await setDoc(newDocRef, {
       name,
-      isbn,
+      isbn, 
       price,
       imageurl,
       Owner,
@@ -100,10 +100,12 @@ const Viewmybooks =async ()=>{
     return newDocRef;
   };
 
-  const bookorder = async (name, email, Qty, bookId) => {
+  const bookorder = async (name, email, Qty, bookId,phone,address) => {
     return await addDoc(collection(firestore, "books", bookId, "orders"), {
       name,
       email,
+      phone,
+      address,
       Qty
     });
   };

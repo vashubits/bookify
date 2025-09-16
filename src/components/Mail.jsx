@@ -4,7 +4,7 @@ import { useFirebase } from "../context/firebase";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify"; 
 
-const Mail = ({ buyerName, buyerEmail, quantity, onMailDone }) => {
+const Mail = ({ buyerName, buyerEmail, quantity,phone,address, onMailDone }) => {
   const [data, setData] = useState(null);
   const [sending, setSending] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
@@ -33,6 +33,8 @@ const Mail = ({ buyerName, buyerEmail, quantity, onMailDone }) => {
       buyer_name: buyerName,
       book_title: data.name,
       quantity: quantity,
+      buyer_phone: phone,
+      buyer_address:address,
       owner_name: data.Owner,
       buyer_email: buyerEmail,
     };
@@ -74,7 +76,22 @@ const Mail = ({ buyerName, buyerEmail, quantity, onMailDone }) => {
       
       <button
         onClick={sendOrderMail}
-        className="btn btn-primary mt-3"
+        className="w-100 mb-3"
+         style={{
+            background: "linear-gradient(135deg, #00bcd4, #1976d2)",
+            border: "none",
+            borderRadius: "10px",
+            fontWeight: "600",
+            padding: "10px",
+          }}
+          onMouseOver={(e) =>
+            (e.currentTarget.style.background =
+              "linear-gradient(135deg, #1976d2, #00bcd4)")
+          }
+          onMouseOut={(e) =>
+            (e.currentTarget.style.background =
+              "linear-gradient(135deg, #00bcd4, #1976d2)")
+          }
         disabled={!data || sending || orderPlaced}
       >
         {sending
