@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useFirebase } from "../context/firebase";
 import { useParams } from "react-router-dom";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card, Badge, Button } from "react-bootstrap";
 
 const MyOrders = () => {
   const { id } = useParams();
@@ -10,27 +10,53 @@ const MyOrders = () => {
   const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
-    firebase
-      .myorders(id)
-      .then((snapshot) => {
+    const fetchOrders = async () => {
+      try {
+        const snapshot = await firebase.myorders(id);
         const orders = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
         setOrderInfo(orders);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching orders:", error.message);
-      });
+      }
+    };
+
+    if (id) fetchOrders();
   }, [firebase, id]);
+
+  const handleDelete = async (orderId) => {
+    if (!window.confirm("Are you sure you want to delete this order?")) return;
+
+    try {
+      await firebase.deleteOrder(id, orderId);
+      setOrderInfo((prev) => prev.filter((order) => order.id !== orderId));
+    } catch (error) {
+      console.error("Error deleting order:", error.message);
+    }
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      await firebase.updateOrderStatus(id, orderId, newStatus);
+      setOrderInfo((prev) =>
+        prev.map((order) =>
+          order.id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+    } catch (error) {
+      console.error("Error updating status:", error.message);
+    }
+  };
 
   const filteredOrders =
     searchText.trim() === ""
       ? orderInfo
       : orderInfo.filter(
           (order) =>
-            order.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            order.email.toLowerCase().includes(searchText.toLowerCase()) ||
+            order.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+            order.email?.toLowerCase().includes(searchText.toLowerCase()) ||
             (order.phone && order.phone.includes(searchText))
         );
 
@@ -54,16 +80,6 @@ const MyOrders = () => {
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           className="form-control w-50 border border-primary shadow-sm rounded-pill px-3 py-2"
-          style={{
-            transition: "0.3s",
-          }}
-          onFocus={(e) =>
-            (e.currentTarget.style.boxShadow =
-              "0 0 10px rgba(0,123,255,0.5)")
-          }
-          onBlur={(e) =>
-            (e.currentTarget.style.boxShadow = "0 0 5px rgba(0,0,0,0.1)")
-          }
         />
       </div>
 
@@ -73,42 +89,73 @@ const MyOrders = () => {
         </p>
       ) : (
         <Row xs={1} md={2} lg={3} className="g-4">
-          {filteredOrders.map((order) => (
-            <Col key={order.id}>
-              <Card
-                className="h-100 shadow-sm"
-                style={{
-                  borderRadius: "12px",
-                  background: "linear-gradient(to right, #f0f4ff, #ffffff)",
-                }}
-              >
-                <Card.Body>
-                  <Card.Title
-                    style={{ color: "#0d47a1", fontWeight: "600" }}
-                  >
-                    Order by {order.name}
-                  </Card.Title>
-                  <Card.Text style={{ color: "#555", lineHeight: "1.5" }}>
-                    <strong>Email:</strong> {order.email} <br />
-                    <strong>Phone:</strong> {order.phone || "N/A"} <br />
-                    <strong>Address:</strong> {order.address || "N/A"} <br />
-                    <strong>Quantity:</strong> {order.Qty}
-                  </Card.Text>
-                </Card.Body>
-                <Card.Footer
-                  className="text-muted"
+          {filteredOrders.map((order) => {
+            const isDelivered = order.status === true;
+            return (
+              <Col key={order.id}>
+                <Card
+                  className="h-100 shadow-sm"
                   style={{
-                    backgroundColor: "#e3f2fd",
-                    fontWeight: "500",
-                    textAlign: "center",
-                    borderRadius: "0 0 12px 12px",
+                    borderRadius: "12px",
+                    background: isDelivered
+                      ? "linear-gradient(to right, #e8f5e9, #ffffff)"
+                      : "linear-gradient(to right, #fff3e0, #ffffff)",
+                    border: isDelivered
+                      ? "2px solid #4caf50"
+                      : "2px solid #ff9800",
                   }}
                 >
-                  Order ID: {order.id}
-                </Card.Footer>
-              </Card>
-            </Col>
-          ))}
+                  <Card.Body>
+                    <Card.Title
+                      style={{
+                        color: isDelivered ? "#2e7d32" : "#e65100",
+                        fontWeight: "600",
+                      }}
+                    >
+                      Order by {order.name}{" "}
+                      <Badge bg={isDelivered ? "success" : "warning"} pill>
+                        {isDelivered ? "Delivered" : "Pending"}
+                      </Badge>
+                    </Card.Title>
+                    <Card.Text style={{ color: "#555", lineHeight: "1.5" }}>
+                      <strong>Email:</strong> {order.email} <br />
+                      <strong>Phone:</strong> {order.phone || "N/A"} <br />
+                      <strong>Address:</strong> {order.address || "N/A"} <br />
+                      <strong>Quantity:</strong> {order.Qty}
+                    </Card.Text>
+
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleDelete(order.id)}
+                    >
+                      Delete Order
+                    </Button>
+
+                    <Button
+                      variant={isDelivered ? "warning" : "success"}
+                      size="sm"
+                      className="ms-2"
+                      onClick={() => handleStatusChange(order.id, !isDelivered)}
+                    >
+                      {isDelivered ? "Mark as Pending" : "Mark as Delivered"}
+                    </Button>
+                  </Card.Body>
+                  <Card.Footer
+                    className="text-muted"
+                    style={{
+                      backgroundColor: isDelivered ? "#c8e6c9" : "#ffe0b2",
+                      fontWeight: "500",
+                      textAlign: "center",
+                      borderRadius: "0 0 12px 12px",
+                    }}
+                  >
+                    Order ID: {order.id}
+                  </Card.Footer>
+                </Card>
+              </Col>
+            );
+          })}
         </Row>
       )}
     </Container>

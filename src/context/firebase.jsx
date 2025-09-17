@@ -9,7 +9,6 @@ import {
   signInWithPopup,
   GoogleAuthProvider
 } from "firebase/auth";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
 import {
   getFirestore,
   collection,
@@ -19,7 +18,9 @@ import {
   getDoc,
   doc,
   where,
-  query
+  query,
+  deleteDoc,  
+  updateDoc    
 } from "firebase/firestore";
 
 const FirebaseContext = createContext(null);
@@ -36,7 +37,6 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const firebaseAuth = getAuth(firebaseApp);
 const googleProvider = new GoogleAuthProvider();
-const storage = getStorage(firebaseApp);
 const firestore = getFirestore(firebaseApp);
 
 export const useFirebase = () => useContext(FirebaseContext);
@@ -51,64 +51,67 @@ export const FirebaseProvider = ({ children }) => {
     });
   }, []);
 
-const Viewmybooks =async ()=>{
-  if(!user)return null;
-  const ref = collection(firestore,"books");
-  const q = query(ref,where("orderId","==",user.uid));
-  const result = await getDocs(q);
-  return result;
-}
-
-  const signupUserWithEmailAndPassword = (email, password) => {
-    return createUserWithEmailAndPassword(firebaseAuth, email, password);
+  const Viewmybooks = async () => {
+    if (!user) return null;
+    const ref = collection(firestore, "books");
+    const q = query(ref, where("orderId", "==", user.uid));
+    const result = await getDocs(q);
+    return result;
   };
 
-  const listallbooks = () => {
-    return getDocs(collection(firestore, "books"));
+  const signupUserWithEmailAndPassword = (email, password) =>
+    createUserWithEmailAndPassword(firebaseAuth, email, password);
+
+  const listallbooks = () => getDocs(collection(firestore, "books"));
+
+  const myorders = (id) =>
+    getDocs(collection(firestore, "books", id, "orders"));
+
+  const deleteOrder = async (bookId, orderId) => {
+    const orderRef = doc(firestore, "books", bookId, "orders", orderId);
+    await deleteDoc(orderRef);
   };
-  const myorders = (id) => {
-   
-   return   getDocs(collection(firestore,"books",id,"orders"));
+
+  const updateOrderStatus = async (bookId, orderId, newStatus) => {
+    const orderRef = doc(firestore, "books", bookId, "orders", orderId);
+    await updateDoc(orderRef, { status: newStatus });
   };
-  const logout =()=>{
+
+  const logout = () => {
     const auth = getAuth();
-    return signOut(auth)
-  }
-
-  const signinUserWithEmailAndPass = (email, password) => {
-    return signInWithEmailAndPassword(firebaseAuth, email, password);
+    return signOut(auth);
   };
+
+  const signinUserWithEmailAndPass = (email, password) =>
+    signInWithEmailAndPassword(firebaseAuth, email, password);
 
   const handlecreatednewlisting = async (name, isbn, price, imageurl, Owner) => {
     const newDocRef = doc(collection(firestore, "books"));
     const userID = newDocRef.id;
-    
-    
+
     await setDoc(newDocRef, {
       name,
-      isbn, 
+      isbn,
       price,
       imageurl,
       Owner,
       userID,
-      orderId:user.uid,
+      orderId: user.uid,
       ownermail: user.email
-
     });
-    
 
     return newDocRef;
   };
 
-  const bookorder = async (name, email, Qty, bookId,phone,address) => {
-    return await addDoc(collection(firestore, "books", bookId, "orders"), {
+  const bookorder = async (name, email, Qty, bookId, phone, address) =>
+    addDoc(collection(firestore, "books", bookId, "orders"), {
       name,
       email,
       phone,
       address,
-      Qty
+      Qty,
+      status: false
     });
-  };
 
   const viewdatabyid = async (id) => {
     const viewref = doc(firestore, "books", id);
@@ -116,11 +119,10 @@ const Viewmybooks =async ()=>{
     return result.exists() ? result.data() : null;
   };
 
-  const signinwithgoogle = () => signInWithPopup(firebaseAuth, googleProvider);
+  const signinwithgoogle = () =>
+    signInWithPopup(firebaseAuth, googleProvider);
 
-
-
-  const isLogin = user ? true : false;
+  const isLogin = !!user;
 
   return (
     <FirebaseContext.Provider
@@ -134,6 +136,8 @@ const Viewmybooks =async ()=>{
         signinUserWithEmailAndPass,
         Viewmybooks,
         myorders,
+        deleteOrder,       
+        updateOrderStatus, 
         signinwithgoogle,
         isLogin
       }}
