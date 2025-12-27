@@ -10,6 +10,9 @@ const Orderds = () => {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [Qty, setQty] = useState("1");
+  const [city, setcity] = useState("");
+  const [state, setstate] = useState("");
+  const [pincode, setpincode] = useState("");
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -21,7 +24,7 @@ const Orderds = () => {
     setIsSubmitting(true);
 
     try {
-      await firebase.bookorder(name, email, Qty, id, phone, address);
+      await firebase.bookorder(name, email, Qty, id, phone, address,city,state,pincode);
       setOrderPlaced(true);
     } catch (err) {
       console.error("Order failed:", err);
@@ -85,6 +88,36 @@ const Orderds = () => {
             placeholder="Enter Your Address"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
+            required
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formCity">
+          <Form.Label>City</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter Your City"
+            value={city}
+            onChange={(e) => setcity(e.target.value)}
+            required
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formState">
+          <Form.Label>State</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter Your State"
+            value={state}
+            onChange={(e) => setstate(e.target.value)}
+            required
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formPincode">
+          <Form.Label>Pincode</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter Your Pincode"
+            value={pincode}
+            onChange={(e) => setpincode(e.target.value)}
             required
           />
         </Form.Group>

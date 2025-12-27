@@ -25,14 +25,17 @@ import {
 
 const FirebaseContext = createContext(null);
 
+
+
 const firebaseConfig = {
-  apiKey: "AIzaSyCGr4Qg1oKC-qXDn3v-fKx0zTx0Vqr56tM",
-  authDomain: "bookify-7006a.firebaseapp.com",
-  projectId: "bookify-7006a",
-  storageBucket: "bookify-7006a.appspot.com",
-  messagingSenderId: "868276582953",
-  appId: "1:868276582953:web:674cc30ba9f4d6cce13a38"
+  apiKey: "AIzaSyDbbZRB5kkWZ_wdhPzfytbbl-jGdVorZ-o",
+  authDomain: "bookify001-75b4a.firebaseapp.com",
+  projectId: "bookify001-75b4a",
+  storageBucket: "bookify001-75b4a.firebasestorage.app",
+  messagingSenderId: "143633750398",
+  appId: "1:143633750398:web:b274363dd7a8aa0afe3b2f"
 };
+
 
 const firebaseApp = initializeApp(firebaseConfig);
 const firebaseAuth = getAuth(firebaseApp);
@@ -76,6 +79,10 @@ export const FirebaseProvider = ({ children }) => {
     const orderRef = doc(firestore, "books", bookId, "orders", orderId);
     await updateDoc(orderRef, { status: newStatus });
   };
+  const updateapproveStatus = async (bookId, orderId, newStatus) => {
+    const orderRef = doc(firestore, "books", bookId, "orders", orderId);
+    await updateDoc(orderRef, { isapprove: newStatus });
+  };
 
   const logout = () => {
     const auth = getAuth();
@@ -103,14 +110,18 @@ export const FirebaseProvider = ({ children }) => {
     return newDocRef;
   };
 
-  const bookorder = async (name, email, Qty, bookId, phone, address) =>
+  const bookorder = async (name, email, Qty, bookId, phone, address,city,state,pincode) =>
     addDoc(collection(firestore, "books", bookId, "orders"), {
       name,
       email,
       phone,
       address,
       Qty,
-      status: false
+      city,
+      state,
+      pincode,
+      status: false,
+      isapprove:false
     });
 
   const viewdatabyid = async (id) => {
@@ -138,6 +149,7 @@ export const FirebaseProvider = ({ children }) => {
         myorders,
         deleteOrder,       
         updateOrderStatus, 
+        updateapproveStatus,
         signinwithgoogle,
         isLogin
       }}

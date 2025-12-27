@@ -8,6 +8,8 @@ const MyOrders = () => {
   const firebase = useFirebase();
   const [orderInfo, setOrderInfo] = useState([]);
   const [searchText, setSearchText] = useState("");
+ 
+  
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -16,6 +18,7 @@ const MyOrders = () => {
         const orders = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
+           
         }));
         setOrderInfo(orders);
       } catch (error) {
@@ -25,6 +28,8 @@ const MyOrders = () => {
 
     if (id) fetchOrders();
   }, [firebase, id]);
+ 
+ 
 
   const handleDelete = async (orderId) => {
     if (!window.confirm("Are you sure you want to delete this order?")) return;
@@ -34,6 +39,18 @@ const MyOrders = () => {
       setOrderInfo((prev) => prev.filter((order) => order.id !== orderId));
     } catch (error) {
       console.error("Error deleting order:", error.message);
+    }
+  };
+   const handleapprove = async (orderId, newapprove) => {
+    try {
+      await firebase.updateapproveStatus(id, orderId, newapprove);
+      setOrderInfo((prev) =>
+        prev.map((order) =>
+          order.id === orderId ? { ...order, isapprove: newapprove} : order
+        )
+      );
+    } catch (error) {
+      console.error("Error updating status:", error.message);
     }
   };
 
@@ -121,6 +138,9 @@ const MyOrders = () => {
                       <strong>Email:</strong> {order.email} <br />
                       <strong>Phone:</strong> {order.phone || "N/A"} <br />
                       <strong>Address:</strong> {order.address || "N/A"} <br />
+                      <strong>City:</strong> {order.city || "N/A"} <br />
+                      <strong>State:</strong> {order.state || "N/A"} <br />
+                      <strong>PinCode:</strong> {order.pincode || "N/A"} <br />
                       <strong>Quantity:</strong> {order.Qty}
                     </Card.Text>
 
@@ -133,12 +153,20 @@ const MyOrders = () => {
                     </Button>
 
                     <Button
-                      variant={isDelivered ? "warning" : "success"}
+                      variant={isDelivered ? "success" : "warning"}
                       size="sm"
                       className="ms-2"
                       onClick={() => handleStatusChange(order.id, !isDelivered)}
                     >
                       {isDelivered ? "Mark as Pending" : "Mark as Delivered"}
+                    </Button>
+                    <Button
+                      variant={order.isapprove ? "success" : "warning"}
+                      size="sm"
+                      className="ms-2"
+                      onClick={() => handleapprove(order.id,!order.isapprove)}
+                    >
+                      {order.isapprove ? "Approve" : " UnApprove"}
                     </Button>
                   </Card.Body>
                   <Card.Footer
@@ -163,3 +191,11 @@ const MyOrders = () => {
 };
 
 export default MyOrders;
+
+
+
+
+
+
+
+
